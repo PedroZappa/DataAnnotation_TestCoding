@@ -97,7 +97,7 @@ def create_and_print_grid(coordinates):
             grid[y][x] = character
     
     # Print the grid
-    for row in grid:
+    for row in reversed(grid):
         print(''.join(row))
 
 
