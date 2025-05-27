@@ -1,1 +1,3 @@
 # DataAnnotation_TestCoding
+
+We begin by preparing the url of a public Google Doc for parsing by making sure we are getting it in the export format. We then use BeautifulSoup to select the table portion of the file, skipping the header and proceeding to parse the x and y coordinates as well as their corresponding character from the rows of the table, converting the coordinates to integers. Next we calculate the dimensions of the message to be printed by getting the max value recorded for x and y. A grid with x times y dimensions is filled with spaces, then finally, one by one the parsed characters are placed in their place in the grid. Then the lines are printed in reverse order, so that the first line parsed is the first line printed.

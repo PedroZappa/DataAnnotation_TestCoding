@@ -53,14 +53,24 @@ def prepare_export_url(input_url):
     """
     parsed_url = urlparse(input_url)
     path_segs = parsed_url.path.split('/')
-    
+
+    if path_segs[-1] == 'pub':
+        # For published URLs, use the /pub endpoint directly
+        return input_url 
+
     try:
         d_index = path_segs.index('d')
-        doc_id = path_segs[d_index + 1]
+        # Handle URLs with '/d/e/' segment structure
+        if path_segs[d_index + 1] == 'e':
+            doc_id = path_segs[d_index + 2]
+        else:
+            doc_id = path_segs[d_index + 1]
+        
+        new_path = f'/document/d/{doc_id}/export'
+    
     except (ValueError, IndexError):
         return input_url  # Fallback for invalid URLs
-    
-    new_path = f'/document/d/{doc_id}/export'
+
     new_url = urlunparse(( # Reconstruct the URL
         parsed_url.scheme,
         parsed_url.netloc,
@@ -97,5 +107,6 @@ def create_and_print_grid(coordinates):
 
 # Run
 if __name__ == "__main__":
-    google_doc_url = "https://docs.google.com/document/d/1qsD4zdqKcZT4UAuOQIW2nJZigKDWNOiMMNoi-5Zwgz4"
+    # google_doc_url = "https://docs.google.com/document/d/1qsD4zdqKcZT4UAuOQIW2nJZigKDWNOiMMNoi-5Zwgz4/edit?tab=t.0"
+    google_doc_url = "https://docs.google.com/document/d/e/2PACX-1vSZ1vDD85PCR1d5QC2XwbXClC1Kuh3a4u0y3VbTvTFQI53erafhUkGot24ulET8ZRqFSzYoi3pLTGwM/pub"
     decode_secret_message(google_doc_url)
