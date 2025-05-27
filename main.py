@@ -7,12 +7,6 @@ def decode_secret_message(google_doc_url):
     Reads a public Google Doc, parses character coordinates, 
     and prints a grid revealing the secret message. 
     """
-    
-    # Convert the publish URL to export format for easier parsing
-    # if '/pub' in google_doc_url:
-    #     export_url = google_doc_url.replace('/pub', '/export?format=html')
-    # else:
-    #     export_url = google_doc_url + '/export?format=html'
     export_url = prepare_export_url(google_doc_url)
     
     try:
@@ -81,10 +75,10 @@ def create_and_print_grid(coordinates):
     """
     Creates a 2D grid from coordinate data and prints it.
     """
-    if not coordinates:
+    if not coordinates: # Check if coordinates are empty
         return
     
-    # Get dimensions needed
+    # Get dimensions
     max_x = max(coord[0] for coord in coordinates)
     max_y = max(coord[1] for coord in coordinates)
     
