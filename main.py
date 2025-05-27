@@ -1,17 +1,19 @@
 import requests
+from urllib.parse import urlparse, urlunparse
 from bs4 import BeautifulSoup
 
 def decode_secret_message(google_doc_url):
     """
     Reads a public Google Doc, parses character coordinates, 
-    and prints a grid revealing the secret message.
+    and prints a grid revealing the secret message. 
     """
     
     # Convert the publish URL to export format for easier parsing
-    if '/pub' in google_doc_url:
-        export_url = google_doc_url.replace('/pub', '/export?format=html')
-    else:
-        export_url = google_doc_url + '/export?format=html'
+    # if '/pub' in google_doc_url:
+    #     export_url = google_doc_url.replace('/pub', '/export?format=html')
+    # else:
+    #     export_url = google_doc_url + '/export?format=html'
+    export_url = prepare_export_url(google_doc_url)
     
     try:
         # Download the document as HTML
@@ -51,6 +53,30 @@ def decode_secret_message(google_doc_url):
     except Exception as e:
         print(f"Error processing document: {e}")
 
+def prepare_export_url(input_url):
+    """
+    Converts a Google Doc URL to an export URL.
+    """
+    parsed_url = urlparse(input_url)
+    path_segs = parsed_url.path.split('/')
+    
+    try:
+        d_index = path_segs.index('d')
+        doc_id = path_segs[d_index + 1]
+    except (ValueError, IndexError):
+        return input_url  # Fallback for invalid URLs
+    
+    new_path = f'/document/d/{doc_id}/export'
+    new_url = urlunparse(( # Reconstruct the URL
+        parsed_url.scheme,
+        parsed_url.netloc,
+        new_path,
+        '',
+        'format=html',
+        ''
+    ))
+    return new_url
+
 def create_and_print_grid(coordinates):
     """
     Creates a 2D grid from coordinate data and prints it.
@@ -77,5 +103,5 @@ def create_and_print_grid(coordinates):
 
 # Run
 if __name__ == "__main__":
-    google_doc_url = "https://docs.google.com/document/d/1qsD4zdqKcZT4UAuOQIW2nJZigKDWNOiMMNoi-5Zwgz4/pub"
+    google_doc_url = "https://docs.google.com/document/d/1qsD4zdqKcZT4UAuOQIW2nJZigKDWNOiMMNoi-5Zwgz4"
     decode_secret_message(google_doc_url)
